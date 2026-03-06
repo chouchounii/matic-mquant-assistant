@@ -1,4 +1,4 @@
-﻿---
+---
 name: matic-mquant-assistant
 description: MQuant Python strategy development assistant. Generates runnable Python strategy code for MQuant platform.
 metadata:
@@ -176,15 +176,6 @@ Auto-generate versioned filenames:
 ...
 ```
 
-**常见策略参数建议**：
-| 策略 | 参数 | 默认值 | 建议范围 | 说明 |
-|------|------|--------|----------|------|
-| 双均线 | 快均线周期 | 5 | 3-10 | 短期趋势 |
-| 双均线 | 慢均线周期 | 20 | 15-60 | 长期趋势 |
-| 网格交易 | 网格数量 | 10 | 5-20 | 价格分段数 |
-| 网格交易 | 单格仓位 | 100股 | 100-1000 | 每格交易量 |
-| 条件单 | 触发价格 | - | 市价±10% | 触发条件 |
-| 条件单 | 有效期 | 当天 | 当天/长期 | 订单有效期 |
 
 **说明**：提供默认值和合理范围，用户可直接使用或自行调整。
 
@@ -216,7 +207,7 @@ Auto-generate versioned filenames:
 
 **严格遵守文档定义（避免运行时错误）**：
 
-生成代码时，必须严格按照 `mquant_api.py` 和 `mquant_struct.py` 中的定义，不得凭记忆或推测：
+生成代码时，必须严格按照 `mquant_api.py` 和 `mquant_struct.py` 中的定义，不得凭记忆或推测。
 
 **API调用必须核对：**
 | API | 文档定义 | 常见错误 |
@@ -356,75 +347,6 @@ def handle_tick(context, tick, msg_type):
 4. 交易是否执行？→ 检查order()调用和返回值
 
 
-## 常见报错总结（生成代码前必读）
-
-**每次生成代码前，对照以下清单检查，避免常见错误：**
-
-### ❌ 错误1：结构体字段不存在
-**报错：** `'Tick' object has no attribute 'last'`
-**原因：** 使用了不存在的字段
-**解决：** 
-- ✅ `tick.current` (最新价)
-- ❌ `tick.last` (不存在)
-
-### ❌ 错误2：API返回类型错误
-**报错：** `'str' object has no attribute 'symbol'` 或 `'dict' object is not iterable`
-**原因：** `get_positions()` 返回字典，不是列表
-**解决：**
-```python
-# ❌ 错误：按列表遍历
-positions = get_positions()
-for pos in positions:  # 遍历得到的是symbol字符串
-    pos.symbol  # 报错！
-
-# ✅ 正确：从字典获取
-positions = get_positions()
-pos = positions.get('300059.SZ')
-amount = pos.amount if pos else 0
-```
-
-### ❌ 错误3：subscribe参数错误
-**报错：** 没有行情数据 / 策略不运行
-**原因：** 使用了不支持的频率参数
-**解决：**
-- ✅ `subscribe(symbol, MarketDataType.KLINE_1M)`
-- ❌ `subscribe(symbol, '1d')` (不支持日线订阅)
-
-### ❌ 错误4：文件名超过11字符
-**报错：** Matic无法加载策略
-**原因：** Python文件名限制11字符（不含扩展名）
-**解决：**
-- ✅ `ugrid_v1.py` (9字符)
-- ❌ `ultra_grid_v1.py` (13字符，超限)
-
-### ❌ 错误5：缺少必要导入
-**报错：** `name 'log' is not defined`
-**原因：** 没有导入mquant_api
-**解决：**
-```python
-# ✅ 必须导入
-from mquant_api import *
-from mquant_struct import *
-```
-
-### ❌ 错误6：API参数顺序错误
-**报错：** `handle_tick() takes 3 positional arguments but 4 were given`
-**原因：** 回调函数参数不匹配
-**解决：** 严格按照文档定义：
-```python
-# ✅ 正确
-def handle_tick(context, tick, msg_type):
-def handle_data(context, kline_data):
-```
-
-### ✅ 生成代码前自检清单
-- [ ] 所有结构体字段已核对文档
-- [ ] `get_positions()` 按字典方式访问
-- [ ] `subscribe()` 使用 MarketDataType.XXX
-- [ ] 文件名 ≤ 11 字符
-- [ ] 已导入 `from mquant_api import *`
-- [ ] 回调函数参数与文档一致
-
 ## API Quick Reference
 
 ### Market Data
@@ -478,22 +400,6 @@ if short_ma > long_ma:
 - Auto-save to M-quant user directory
 - Version control (max 5 versions)
 
-### C++ Strategy
-- **Code generation only** - generates .cpp/.h files
-- **No automatic DLL compilation** - user must compile in Visual Studio
-- Version control same as Python
-- See `reference/mquant_inside_c_document/HtStrategyTemplate` for C++ template
-
-## Templates
-
-### Dual MA Strategy
-Golden cross buy, death cross sell.
-
-### Grid Trading
-Buy on price drop, sell on price rise.
-
-### Conditional Order
-Price-triggered order within time window.
 
 ## Unified Log Format
 
@@ -531,26 +437,6 @@ strategy_name.log  <- Generation metadata + Runtime logs (unified)
 - I read the `.log` file to see generation parameters and runtime logs
 - Quickly identify if issue is in generation or runtime environment
 
-## Notes
-
-### 平台限制
-- **Matic不支持回测**，策略验证需使用模拟盘或小仓位实盘
-- Initialize() 中不能下单
-- A股必须以100股为单位（整手）
-
-### 测试建议
-1. **首次运行**：使用模拟盘或极小仓位（1手）验证逻辑
-2. **观察日志**：检查 `.log` 文件确认策略运行正常
-3. **逐步加仓**：确认策略按预期运行后再增加仓位
-4. **异常处理**：如发生错误，可粘贴错误日志寻求帮助
-
-### 代码改进
-- 生成的代码框架正确，但策略逻辑可能需要根据实际表现调整
-- 建议先让策略跑起来，再逐步优化参数和逻辑
-
-## Error Diagnosis & Fix
-
-当用户粘贴错误日志时，执行以下诊断流程：
 
 ### Step 1: 错误识别
 分析错误日志，分类问题类型：
@@ -569,28 +455,4 @@ strategy_name.log  <- Generation metadata + Runtime logs (unified)
 ### Step 3: 一键修复
 提供修复方案：
 
-```
-===== ERROR DIAGNOSIS =====
-错误类型：API Error
-错误原因：未订阅行情就调用get_kline_data()
-位置：第42行
-
-修复方案：
-在initialize()中添加订阅：
-    subscribe('000001.SZ', '1m')
-
-修复后的代码：
-[展示修复后的完整代码片段]
-```
-
-**常见错误速查表**：
-| 错误信息 | 可能原因 | 解决方案 |
-|----------|----------|----------|
-| NameError: name 'X' is not defined | 变量未定义 | 检查变量初始化 |
-| TypeError: 'NoneType' | 函数返回None被使用 | 添加判空处理 |
-| API not subscribed | 未订阅行情 | 在initialize中添加subscribe |
-| Order failed: -1 | 下单失败 | 检查账户余额、持仓限制 |
-| DLL load failed | C++ DLL加载失败 | 检查x64/Release、依赖项 |
-
-用户确认后，生成修复后的完整代码。
-
+``
