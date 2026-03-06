@@ -4,7 +4,7 @@
 
 ## 简介
 
-Matic-MQuant-Assistant 是一个为 **华泰Matic MQuant 模块** 编写的策略生成助手SKILL。目标是能够根据用户需求快速生成**可直接运行**的 Mquant Python 策略代码，提升效率。
+Matic-MQuant-Assistant 是一个为 **Matic MQuant 模块** 编写的策略生成助手SKILL。目标是能够根据用户需求快速生成**可直接运行**的 Mquant Python 策略代码，提升效率。
 
 **核心理念：可运行 > 完美**
 
