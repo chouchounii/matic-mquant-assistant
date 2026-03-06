@@ -1,20 +1,19 @@
 ﻿---
 name: matic-mquant-assistant
-description: MQuant strategy development assistant. Generates Python and C++ strategy code for MQuant platform.
+description: MQuant Python strategy development assistant. Generates runnable Python strategy code for MQuant platform.
 metadata:
   emoji: "")
   references:
     - reference/mquant_inside_python_document/python template.py
     - reference/mquant_inside_python_document/mquant_api.py
     - reference/mquant_inside_python_document/mquant_struct.py
-    - reference/mquant_inside_c_document/HtStrategyTemplate
 ---
 
 # MQuant Strategy Development Assistant
 
 ## Overview
 
-This skill generates **runnable** Python and C++ strategy code for the MQuant quantitative trading platform.
+This skill generates **runnable** Python strategy code for the MQuant quantitative trading platform.
 
 **核心理念**：
 - 代码**可直接运行**优先，策略逻辑可由用户后续调整
@@ -28,10 +27,6 @@ This skill generates **runnable** Python and C++ strategy code for the MQuant qu
 ```
 reference/
 ├── mquantFAQ.md                    # 常见问题
-├── mquant_inside_c_document/       # C++策略文档与模板
-│   ├── HtStrategyTemplate/         # C++策略模板forQT
-│   ├── HtStrategyTemplate-VS2015/  # VS2015版本模板
-│   └── MQuantCxxSDK/               # C++ SDK
 ├── mquant_inside_python_document/  # Python API文档
 │   ├── python template.py          # Python策略模板
 │   ├── mquant_api.py               # API接口定义
