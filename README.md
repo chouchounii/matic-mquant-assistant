@@ -1,6 +1,6 @@
 ﻿# Matic-MQuant-Assistant
 
-> **MQuant 策略程序 SKILL**
+> **MQuant 策略程序生成 OPENCLAW SKILL**
 
 ## 简介
 
