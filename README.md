@@ -1,4 +1,4 @@
-﻿# Matic-MQuant-Assistant
+﻿# MQuant Coder
 
 > **MQuant 策略程序生成 OPENCLAW SKILL**
 
